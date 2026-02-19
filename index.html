@@ -3,79 +3,81 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>沖繩自由行</title>
+    <title>沖繩自由行 - 16人專業導覽與記帳</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap');
         
-        body { font-family: 'Noto Sans TC', sans-serif; background-color: #fcfdfe; }
+        body { font-family: 'Noto Sans TC', sans-serif; background-color: #f8fafc; color: #1e293b; }
         .tab-content { display: none; }
-        .tab-content.active { display: block; animation: fadeIn 0.4s ease-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .tab-content.active { display: block; animation: slideUp 0.4s ease-out; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
         
-        /* 時間軸線條 */
-        .timeline-container { position: relative; padding-left: 1.5rem; }
-        .timeline-line { position: absolute; left: 0.75rem; top: 0; bottom: 0; width: 2px; background: #e2e8f0; }
+        /* 寬距時間軸設計：徹底避免圓圈擋字 */
+        .timeline-container { position: relative; padding-left: 6.5rem; }
+        .timeline-line { position: absolute; left: 3.25rem; top: 0; bottom: 0; width: 2px; background: #e2e8f0; }
         
-        /* 修正後的圈圈樣式：確保不遮擋文字 */
+        .timeline-item { position: relative; margin-bottom: 3rem; }
         .timeline-dot { 
             position: absolute; 
-            left: 0.45rem; 
-            width: 0.75rem; 
-            height: 0.75rem; 
+            left: -3.65rem; 
+            top: 0.45rem;
+            width: 0.85rem; 
+            height: 0.85rem; 
             border-radius: 99px; 
             background: white; 
-            border: 2px solid #2563eb; 
+            border: 3px solid #2563eb; 
             z-index: 10;
-            margin-top: 0.25rem;
         }
         
-        /* 時間文字增加左邊距，避免被圈圈擋住 */
         .time-label {
-            margin-left: 1.5rem;
-            font-weight: 700;
-            font-size: 0.75rem;
+            display: inline-block;
+            background-color: #eff6ff;
             color: #2563eb;
-            display: block;
+            font-size: 0.75rem;
+            font-weight: 800;
+            padding: 0.15rem 0.6rem;
+            border-radius: 0.5rem;
+            margin-bottom: 0.5rem;
+            box-shadow: 0 1px 2px rgba(37, 99, 235, 0.1);
         }
 
-        .event-content {
-            margin-left: 1.5rem;
-            padding-bottom: 2rem;
+        .event-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 1.5rem;
+            border: 1px solid #f1f5f9;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
         }
 
-        .commute-step {
-            position: relative;
-            padding: 0.75rem 1rem;
-            margin: 0.5rem 0 1rem 1.5rem;
+        .commute-info {
             background: #f1f5f9;
-            border-radius: 0.75rem;
             border-left: 4px solid #94a3b8;
-            font-size: 0.85rem;
+            padding: 0.75rem 1rem;
+            margin: -2rem 0 2rem 0;
+            font-size: 0.8rem;
             color: #475569;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
+            border-radius: 0 0.75rem 0.75rem 0;
         }
 
         .no-scrollbar::-webkit-scrollbar { display: none; }
     </style>
 </head>
-<body class="text-slate-800 antialiased">
+<body class="antialiased">
 
     <!-- 頂部導覽列 -->
     <nav class="bg-white/90 backdrop-blur-md sticky top-0 z-50 border-b border-slate-200">
         <div class="max-w-4xl mx-auto px-4">
             <div class="flex justify-between items-center h-16">
                 <div class="flex items-center gap-2">
-                    <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white font-bold shadow-lg shadow-blue-200 text-xl">沖</div>
-                    <span class="font-bold text-lg tracking-tight">沖繩自由行</span>
+                    <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white font-bold shadow-lg text-xl italic">沖</div>
+                    <span class="font-bold text-lg tracking-tight hidden sm:block">沖繩自由行 2026</span>
                 </div>
                 <div class="flex gap-1 overflow-x-auto no-scrollbar">
-                    <button onclick="switchTab('overview')" id="btn-overview" class="tab-btn px-4 py-2 text-sm font-medium rounded-lg text-blue-600 bg-blue-50">規劃總覽</button>
-                    <button onclick="switchTab('daily')" id="btn-daily" class="tab-btn px-4 py-2 text-sm font-medium rounded-lg text-slate-500 hover:bg-slate-50">每日行程</button>
-                    <button onclick="switchTab('food')" id="btn-food" class="tab-btn px-4 py-2 text-sm font-medium rounded-lg text-slate-500 hover:bg-slate-50">精選美食</button>
+                    <button onclick="switchTab('daily')" id="btn-daily" class="tab-btn px-4 py-2 text-sm font-medium rounded-lg text-blue-600 bg-blue-50">行程規劃</button>
+                    <button onclick="switchTab('transport')" id="btn-transport" class="tab-btn px-4 py-2 text-sm font-medium rounded-lg text-slate-500 hover:bg-slate-50">交通攻略</button>
+                    <button onclick="switchTab('wallet')" id="btn-wallet" class="tab-btn px-4 py-2 text-sm font-medium rounded-lg text-slate-500 hover:bg-slate-50">旅費記帳</button>
                 </div>
             </div>
         </div>
@@ -83,295 +85,330 @@
 
     <main class="max-w-4xl mx-auto px-4 py-8">
         
-        <!-- 區塊：總覽 -->
-        <section id="overview" class="tab-content active space-y-6">
-            <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-100">
-                <h2 class="text-3xl font-bold mb-4 tracking-tight">2026 沖繩 4 天 3 夜家族遊</h2>
-                <p class="text-slate-500 text-sm leading-relaxed mb-8">
-                    全行程以那霸市中心為基地，省去頻繁搬運行李的困擾，並詳細估算點到點之通勤時間。
-                </p>
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <div class="p-4 bg-slate-50 rounded-2xl border border-slate-100 text-center">
-                        <p class="text-xs text-slate-400 mb-1">對象</p>
-                        <p class="font-bold">4 位成人</p>
-                    </div>
-                    <div class="p-4 bg-blue-50 rounded-2xl border border-blue-100 text-center">
-                        <p class="text-xs text-blue-400 mb-1">機宿支出</p>
-                        <p class="font-bold text-sm">1.8 萬/人</p>
-                    </div>
-                    <div class="p-4 bg-slate-50 rounded-2xl border border-slate-100 text-center">
-                        <p class="text-xs text-slate-400 mb-1">每日預算</p>
-                        <p class="font-bold text-sm">約 4 萬日圓</p>
-                    </div>
-                    <div class="p-4 bg-green-50 rounded-2xl border border-green-100 text-center">
-                        <p class="text-xs text-green-600 mb-1">自由零用</p>
-                        <p class="font-bold text-sm">9,000 NTD</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="grid md:grid-cols-2 gap-6">
-                <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
-                    <h3 class="font-bold text-slate-700 mb-4">預算支出估算比例</h3>
-                    <div class="h-64"><canvas id="budgetPie"></canvas></div>
-                </div>
-                <div class="bg-slate-900 p-8 rounded-3xl text-white">
-                    <h3 class="text-lg font-bold mb-4">住宿：Le'gent 那霸酒店</h3>
-                    <p class="text-sm opacity-80 leading-relaxed">
-                        連續三晚入住，無需更換房間。鄰近單軌「旭橋站」，步行僅需 5-7 分鐘。樓下即有超商，機能極佳。
-                    </p>
-                    <div class="mt-8 pt-6 border-t border-white/10">
-                        <p class="text-xs text-slate-400 mb-2 font-mono uppercase tracking-widest">Map Info</p>
-                        <a href="https://maps.app.goo.gl/uXp4UjK7yVfRk9Y19" target="_blank" class="text-blue-400 text-sm font-bold hover:underline">Google Maps 導航 ➔</a>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- 區塊：每日行程 -->
-        <section id="daily" class="tab-content space-y-10">
-            
+        <!-- 每日行程區塊 -->
+        <section id="daily" class="tab-content active space-y-12">
             <!-- Day 1 -->
-            <div class="bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-slate-100">
-                <div class="flex items-center gap-4 mb-8">
-                    <div class="bg-blue-600 text-white w-10 h-10 rounded-lg flex items-center justify-center font-bold">01</div>
-                    <h2 class="text-xl font-bold">2/26 (四) 抵達與分流採購</h2>
-                </div>
+            <div>
+                <h3 class="text-xl font-bold flex items-center gap-3 mb-8 text-slate-700">
+                    <span class="bg-blue-600 text-white w-8 h-8 rounded-lg flex items-center justify-center font-mono italic">01</span> 2/26 (四) 到達與任務分流
+                </h3>
                 <div class="timeline-container">
                     <div class="timeline-line"></div>
-                    
-                    <div class="relative">
+                    <div class="timeline-item">
                         <div class="timeline-dot"></div>
                         <span class="time-label">12:20</span>
-                        <div class="event-content">
-                            <h4 class="font-bold">抵達那霸機場 (OKA)</h4>
-                        </div>
+                        <div class="event-card"><h4 class="font-bold">抵達那霸機場 (OKA)</h4><p class="text-xs text-slate-400 mt-1">16人集體通關領行李</p></div>
                     </div>
-
-                    <div class="commute-step">單軌電車 (那霸機場 ➔ 旭橋) | 15 分鐘</div>
-
-                    <div class="relative">
+                    <div class="commute-info">➔ 單軌電車 (機場 ➔ 旭橋站) | 15 分鐘</div>
+                    <div class="timeline-item">
                         <div class="timeline-dot"></div>
-                        <span class="time-label">14:30</span>
-                        <div class="event-content">
-                            <h4 class="font-bold">飯店 Check-in 放置行李</h4>
-                        </div>
-                    </div>
-
-                    <div class="commute-step">分頭進行 (計程車/步行) | 20 分鐘</div>
-
-                    <div class="relative">
-                        <div class="timeline-dot bg-amber-500"></div>
                         <span class="time-label">15:30 - 18:30</span>
-                        <div class="event-content">
-                            <div class="bg-amber-50 p-4 rounded-xl border border-amber-100">
-                                <p class="font-bold text-amber-800 text-sm mb-2">★ 關鍵分流計畫</p>
-                                <div class="grid md:grid-cols-2 gap-4">
-                                    <div>
-                                        <p class="font-bold text-blue-700 text-xs uppercase">騎士裝備採購</p>
-                                        <p class="text-[11px] text-slate-500 mt-1">前往 Ricoland OKA 或 Naps。建議預留 180 分鐘選購安全帽。</p>
-                                    </div>
-                                    <div>
-                                        <p class="font-bold text-emerald-700 text-xs uppercase">波上宮與海灘</p>
-                                        <p class="text-[11px] text-slate-500 mt-1">家人步行前往那霸唯一海灘。建議停留 90 分鐘。</p>
-                                    </div>
-                                </div>
-                            </div>
+                        <div class="event-card">
+                            <h4 class="font-bold text-amber-600 italic">分流計畫：騎士裝備 vs 波上宮</h4>
+                            <p class="text-xs text-slate-500 mt-2 leading-relaxed">買全帽組搭計程車前往 Ricoland OKA；其他人步行至波上宮散策。</p>
                         </div>
                     </div>
-
-                    <div class="commute-step">單軌/計程車 ➔ 久茂地集合 | 15 分鐘</div>
-
-                    <div class="relative">
-                        <div class="timeline-dot bg-rose-500"></div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot bg-rose-500 border-rose-500"></div>
                         <span class="time-label">19:00</span>
-                        <div class="event-content">
-                            <h4 class="font-bold text-rose-600">晚餐：燒肉きんぐ 那覇久茂地店</h4>
-                            <p class="text-xs text-slate-500 mt-1">必吃燒肉吃到飽。建議停留 120 分鐘。</p>
-                            <a href="https://maps.app.goo.gl/KkPqA5YyHwTqKj6A9" target="_blank" class="text-blue-500 text-[10px] underline">Google Maps ➔</a>
-                        </div>
+                        <div class="event-card"><h4 class="font-bold text-rose-600 italic">晚餐：燒肉きんぐ 那覇久茂地店</h4></div>
                     </div>
                 </div>
             </div>
 
             <!-- Day 2 -->
-            <div class="bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-slate-100">
-                <div class="flex items-center gap-4 mb-8">
-                    <div class="bg-blue-600 text-white w-10 h-10 rounded-lg flex items-center justify-center font-bold">02</div>
-                    <h2 class="text-xl font-bold">2/27 (五) 北部一日日遊巴士</h2>
-                </div>
+            <div class="pt-8 border-t border-slate-100">
+                <h3 class="text-xl font-bold flex items-center gap-3 mb-8 text-slate-700">
+                    <span class="bg-blue-600 text-white w-8 h-8 rounded-lg flex items-center justify-center font-mono italic">02</span> 2/27 (五) 南部全景與 DFS 精品
+                </h3>
                 <div class="timeline-container">
                     <div class="timeline-line"></div>
-                    <div class="relative">
+                    <div class="timeline-item">
                         <div class="timeline-dot"></div>
-                        <span class="time-label">08:30</span>
-                        <div class="event-content">
-                            <h4 class="font-bold">市區集合地點出發</h4>
+                        <span class="time-label">07:30 - 17:30</span>
+                        <div class="event-card">
+                            <h4 class="font-bold text-emerald-600 italic">Klook 南部一日遊 (16人)</h4>
+                            <p class="text-[11px] text-slate-500 mt-2 leading-tight">知念岬 ➔ 新原海灘 ➔ 文化王國/玉泉洞 ➔ 系滿魚市場 ➔ Outlet ➔ 瀨長島夕陽。</p>
                         </div>
                     </div>
-
-                    <div class="commute-step">KKday 專車 ➔ 北部名護 | 120 分鐘</div>
-
-                    <div class="relative">
-                        <div class="timeline-dot bg-blue-500"></div>
-                        <span class="time-label">11:30 - 15:30</span>
-                        <div class="event-content">
-                            <h4 class="font-bold text-blue-600 italic">美麗海水族館 (推薦停留 4 小時)</h4>
-                            <p class="text-xs text-slate-500 mt-1">重點：黑潮之海鯨鯊餵食秀、海豚秀。</p>
-                            <a href="https://maps.app.goo.gl/W5A8YyHwTqKj6A9" target="_blank" class="text-blue-500 text-[10px] underline">Google Maps ➔</a>
+                    <div class="commute-info">➔ 接送回市區 ➔ 轉單軌至歌町站 | 30 分鐘</div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot bg-indigo-500 border-indigo-500"></div>
+                        <span class="time-label">18:30 - 20:30</span>
+                        <div class="event-card">
+                            <h4 class="font-bold text-indigo-700">DFS Galleria 國際精品免稅店</h4>
+                            <p class="text-xs text-slate-500 mt-1 italic">在那霸歌町站。購買後持提貨單於 3/1 機場提貨。</p>
                         </div>
                     </div>
-
-                    <div class="commute-step">專車回程 ➔ 那霸市區 | 120 分鐘</div>
-
-                    <div class="relative">
-                        <div class="timeline-dot bg-orange-500"></div>
-                        <span class="time-label">19:30</span>
-                        <div class="event-content">
-                            <h4 class="font-bold">晚餐：一蘭拉麵</h4>
-                            <p class="text-xs text-slate-500 mt-1">位於國際通入口。建議停留 60 分鐘。</p>
-                        </div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot bg-orange-500 border-orange-500"></div>
+                        <span class="time-label">21:00</span>
+                        <div class="event-card"><h4 class="font-bold text-orange-600 italic">晚餐：一蘭拉麵 那霸國際通店</h4></div>
                     </div>
                 </div>
             </div>
 
             <!-- Day 3 -->
-            <div class="bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-slate-100">
-                <div class="flex items-center gap-4 mb-8">
-                    <div class="bg-blue-600 text-white w-10 h-10 rounded-lg flex items-center justify-center font-bold">03</div>
-                    <h2 class="text-xl font-bold">2/28 (六) 歷史古道與夕陽美景</h2>
-                </div>
+            <div class="pt-8 border-t border-slate-100">
+                <h3 class="text-xl font-bold flex items-center gap-3 mb-8 text-slate-700">
+                    <span class="bg-indigo-600 text-white w-8 h-8 rounded-lg flex items-center justify-center font-mono italic">03</span> 2/28 (六) 北部 10H 包車紀行
+                </h3>
                 <div class="timeline-container">
                     <div class="timeline-line"></div>
-                    <div class="relative">
+                    <div class="timeline-item">
                         <div class="timeline-dot"></div>
-                        <span class="time-label">09:30 - 12:00</span>
-                        <div class="event-content">
-                            <h4 class="font-bold">首里城公園 & 金城町石疊道</h4>
-                            <p class="text-xs text-slate-500 mt-1">探訪世界遺產琉球遺跡。建議停留 150 分鐘。</p>
+                        <span class="time-label">08:30</span>
+                        <div class="event-card"><h4 class="font-bold text-indigo-700 underline decoration-indigo-200 decoration-4 underline-offset-4">16人包車飯店出發 (兩台 9 人座)</h4></div>
+                    </div>
+                    <div class="commute-info">➔ 高速道路直達萬座毛 | 50 分鐘</div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot bg-blue-500 border-blue-500"></div>
+                        <span class="time-label">10:00 - 16:30</span>
+                        <div class="event-card">
+                            <h4 class="font-bold text-blue-600">萬座毛 ➔ 古宇利島 ➔ 美麗海水族館</h4>
+                            <p class="text-xs text-slate-500 mt-2 italic">水族館停留 3.5 小時，觀看鯨鯊與餵食表演。</p>
                         </div>
                     </div>
-
-                    <div class="commute-step">單軌首里站 ➔ 國際通區域 | 20 分鐘</div>
-
-                    <div class="relative">
-                        <div class="timeline-dot bg-emerald-500"></div>
-                        <span class="time-label">13:30 - 16:30</span>
-                        <div class="event-content">
-                            <h4 class="font-bold">國際通深度採購</h4>
-                            <p class="text-xs text-slate-500 mt-1">藥妝、伴手禮、第一牧志公設市場。建議停留 180 分鐘。</p>
-                        </div>
-                    </div>
-
-                    <div class="commute-step">接駁巴士/計程車 ➔ 瀨長島 | 30 分鐘</div>
-
-                    <div class="relative">
-                        <div class="timeline-dot bg-indigo-500"></div>
-                        <span class="time-label">17:00 - 19:00</span>
-                        <div class="event-content">
-                            <h4 class="font-bold">瀨長島 Umikaji Terrace 夕陽</h4>
-                            <p class="text-xs text-slate-500 mt-1">觀賞飛機起降與海景。建議停留 120 分鐘。</p>
-                            <a href="https://maps.app.goo.gl/uXp4UjK7yVfRk9Y19" target="_blank" class="text-blue-500 text-[10px] underline">Google Maps ➔</a>
+                    <div class="commute-info">➔ 返回飯店 | 100 分鐘</div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot bg-rose-500 border-rose-500"></div>
+                        <span class="time-label">19:00 - 自由夜</span>
+                        <div class="event-card">
+                            <h4 class="font-bold text-rose-700 italic">最終夜晚餐：阿古豬涮涮鍋</h4>
+                            <p class="text-xs text-slate-500 mt-2">16人可自由分組行動。推薦：我那霸豚肉店。</p>
                         </div>
                     </div>
                 </div>
             </div>
 
             <!-- Day 4 -->
-            <div class="bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-slate-100">
-                <div class="flex items-center gap-4 mb-8">
-                    <div class="bg-slate-800 text-white w-10 h-10 rounded-lg flex items-center justify-center font-bold">04</div>
-                    <h2 class="text-xl font-bold">3/01 (日) 最後巡禮與返程</h2>
-                </div>
+            <div class="pt-8 border-t border-slate-100">
+                <h3 class="text-xl font-bold flex items-center gap-3 mb-8 text-slate-700">
+                    <span class="bg-slate-800 text-white w-8 h-8 rounded-lg flex items-center justify-center font-mono italic">04</span> 3/01 (日) 最後採買與返程
+                </h3>
                 <div class="timeline-container">
                     <div class="timeline-line"></div>
-                    <div class="relative">
+                    <div class="timeline-item">
                         <div class="timeline-dot"></div>
-                        <span class="time-label">11:00</span>
-                        <div class="event-content">
-                            <h4 class="font-bold">退房與市區補貨</h4>
+                        <span class="time-label">09:30 - 12:30</span>
+                        <div class="event-card">
+                            <h4 class="font-bold text-slate-600">市區補貨：國際通與藥妝店</h4>
                         </div>
                     </div>
-
-                    <div class="commute-step">單軌旭橋 ➔ 那霸機場 | 15 分鐘</div>
-
-                    <div class="relative">
-                        <div class="timeline-dot bg-blue-600"></div>
+                    <div class="commute-info">➔ 單軌旭橋 ➔ 那霸機場 | 15 分鐘</div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot bg-blue-600 border-blue-600"></div>
                         <span class="time-label">14:50</span>
-                        <div class="event-content">
-                            <h4 class="font-bold underline underline-offset-4 text-blue-700">機場辦理登機</h4>
-                            <p class="text-xs text-rose-500 mt-2 font-bold italic">※ 請預留時間處理手提安全帽託運事宜</p>
+                        <div class="event-card">
+                            <h4 class="font-bold text-blue-700 italic underline underline-offset-4">機場報到、領取 DFS 精品</h4>
+                            <p class="text-[10px] text-rose-500 font-bold mt-2">※ 重要提醒：精品領取需持單在安檢後櫃台辦理。</p>
                         </div>
                     </div>
-
-                    <div class="relative">
-                        <div class="timeline-dot bg-slate-800"></div>
+                    <div class="timeline-item mb-0">
+                        <div class="timeline-dot bg-slate-800 border-slate-800"></div>
                         <span class="time-label">16:50</span>
-                        <div class="event-content">
-                            <h4 class="font-bold">班機起飛返台</h4>
-                        </div>
+                        <div class="event-card"><h4 class="font-bold">班機起飛返台</h4></div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- 區塊：美食地圖 -->
-        <section id="food" class="tab-content space-y-6">
-            <h2 class="text-2xl font-bold mb-4">精選美食清單</h2>
-            <div class="grid sm:grid-cols-2 gap-4">
-                <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
-                    <span class="text-[10px] bg-rose-100 text-rose-600 px-2 py-1 rounded font-bold">必吃燒肉</span>
-                    <h4 class="font-bold text-lg mt-2">燒肉王 (久茂地店)</h4>
-                    <p class="text-xs text-slate-500 mt-2 mb-4 italic">人氣吃到飽燒肉，建議提早 30 天網路訂位。</p>
-                    <a href="https://maps.app.goo.gl/KkPqA5YyHwTqKj6A9" target="_blank" class="text-blue-600 text-xs font-bold">Google Maps ➔</a>
+        <!-- 交通攻略區塊 -->
+        <section id="transport" class="tab-content space-y-6">
+            <h2 class="text-2xl font-bold px-2 italic">16 人團體交通配置明細</h2>
+            <div class="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm space-y-6">
+                <div class="p-4 bg-blue-50 rounded-2xl border border-blue-100">
+                    <p class="text-xs text-blue-400 font-bold uppercase mb-2 tracking-widest">2/28 專屬包車 (已預約)</p>
+                    <div class="flex justify-between items-center">
+                        <span class="font-bold text-slate-700">行腳沖繩 | 兩台 9 人座商務車</span>
+                        <span class="text-blue-600 font-bold italic">JPY 106,000</span>
+                    </div>
                 </div>
-                <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
-                    <span class="text-[10px] bg-blue-100 text-blue-600 px-2 py-1 rounded font-bold">經典麵食</span>
-                    <h4 class="font-bold text-lg mt-2">一蘭拉麵</h4>
-                    <p class="text-xs text-slate-500 mt-2 mb-4 italic">國際通上的經典滋味，適合逛街後享用。</p>
-                    <a href="https://maps.app.goo.gl/vXqA5YyHwTqKj6A9" target="_blank" class="text-blue-600 text-xs font-bold">Google Maps ➔</a>
+                <div class="p-4 bg-emerald-50 rounded-2xl border border-emerald-100">
+                    <p class="text-xs text-emerald-400 font-bold uppercase mb-2 tracking-widest">2/27 一日遊</p>
+                    <p class="font-bold text-slate-700 italic">Klook 南部大滿貫巴士 | 16人集體預定</p>
+                </div>
+                <div class="p-4 bg-slate-50 rounded-2xl">
+                    <p class="text-xs text-slate-400 font-bold uppercase mb-2 tracking-widest">市區單軌 (Yui Rail)</p>
+                    <p class="font-bold text-slate-700">主要用於機場接駁、DFS精品採購</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 記帳本區塊 -->
+        <section id="wallet" class="tab-content space-y-6">
+            <div class="flex justify-between items-center px-2">
+                <h2 class="text-2xl font-bold italic">旅費記帳本 (Expense Tracker)</h2>
+                <span class="text-xs bg-slate-100 px-3 py-1 rounded-full text-slate-500 font-bold">匯率預設：0.22</span>
+            </div>
+
+            <!-- 記帳輸入框 -->
+            <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <select id="exp-category" class="bg-slate-50 p-3 rounded-xl text-sm border-none outline-none focus:ring-2 focus:ring-blue-500 transition">
+                        <option value="Food">餐飲費用</option>
+                        <option value="Transport">交通包車</option>
+                        <option value="Shopping">購物採買</option>
+                        <option value="Misc">景點門票/雜支</option>
+                    </select>
+                    <input type="text" id="exp-desc" placeholder="支出項目 (如：燒肉王)" class="bg-slate-50 p-3 rounded-xl text-sm border-none outline-none focus:ring-2 focus:ring-blue-500">
+                    <input type="number" id="exp-amount" placeholder="金額 (日圓 JPY)" class="bg-slate-50 p-3 rounded-xl text-sm border-none outline-none focus:ring-2 focus:ring-blue-500">
+                    <button onclick="addExpense()" class="bg-blue-600 text-white p-3 rounded-xl font-bold hover:bg-blue-700 transition shadow-lg shadow-blue-100">新增支出</button>
+                </div>
+            </div>
+
+            <!-- 支出分析 -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="md:col-span-1 bg-white p-6 rounded-3xl border border-slate-100 shadow-sm flex flex-col items-center">
+                    <h4 class="text-xs font-bold text-slate-400 uppercase mb-4 tracking-widest">支出佔比分析</h4>
+                    <div class="h-48 w-full"><canvas id="expenseChart"></canvas></div>
+                </div>
+                <div class="md:col-span-2 bg-white p-6 rounded-3xl border border-slate-100 shadow-sm overflow-hidden">
+                    <div class="flex justify-between items-center mb-4">
+                        <h4 class="text-xs font-bold text-slate-400 uppercase tracking-widest">最近支出明細</h4>
+                        <button onclick="clearExpenses()" class="text-[10px] text-rose-500 font-bold hover:underline">清除紀錄</button>
+                    </div>
+                    <div class="overflow-y-auto max-h-60 no-scrollbar">
+                        <table class="w-full text-left text-sm">
+                            <thead>
+                                <tr class="text-slate-400 border-b border-slate-50">
+                                    <th class="py-2">項目</th>
+                                    <th class="py-2">日圓 (JPY)</th>
+                                    <th class="py-2">約台幣 (TWD)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="expense-list">
+                                <!-- 動態填入 -->
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </section>
 
     </main>
 
-    <footer class="text-center py-10 text-slate-400 text-[10px] tracking-widest uppercase">
-        <p>© 2026 Okinawa Journey Plan | All Rights Reserved</p>
+    <footer class="text-center py-10 text-slate-300 text-[10px] tracking-[0.2em] uppercase italic border-t border-slate-100 mt-20">
+        © 2026 OKINAWA JOURNEY PLANNER | FAMILY 16-PAX FINAL V19
     </footer>
 
     <script>
+        // 切換標籤邏輯
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
             document.getElementById(tabId).classList.add('active');
-
             document.querySelectorAll('.tab-btn').forEach(b => {
                 b.classList.remove('text-blue-600', 'bg-blue-50');
                 b.classList.add('text-slate-500');
             });
             const btn = document.getElementById('btn-' + tabId);
-            btn.classList.add('text-blue-600', 'bg-blue-50');
-            btn.classList.remove('text-slate-500');
+            if (btn) {
+                btn.classList.add('text-blue-600', 'bg-blue-50');
+                btn.classList.remove('text-slate-500');
+            }
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        window.onload = function() {
-            const ctxPie = document.getElementById('budgetPie').getContext('2d');
-            new Chart(ctxPie, {
-                type: 'doughnut',
-                data: {
-                    labels: ['燒肉饗宴', '拉麵/小吃', 'KKday套票', '交通費'],
-                    datasets: [{
-                        data: [45, 15, 25, 15],
-                        backgroundColor: ['#f43f5e', '#3b82f6', '#fbbf24', '#10b981'],
-                        borderWidth: 0
-                    }]
-                },
-                options: {
-                    maintainAspectRatio: false,
-                    plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10 } } } }
-                }
+        // 記帳邏輯
+        let expenses = JSON.parse(localStorage.getItem('okinawa_expenses')) || [
+            { category: 'Transport', desc: '2/28 包車餘額', amount: 106000 },
+            { category: 'Food', desc: '預定燒肉大餐', amount: 80000 }
+        ];
+        let expenseChart = null;
+
+        function addExpense() {
+            const cat = document.getElementById('exp-category').value;
+            const desc = document.getElementById('exp-desc').value;
+            const amount = parseFloat(document.getElementById('exp-amount').value);
+
+            if (!desc || isNaN(amount)) {
+                alert('請填入正確的項目與金額！');
+                return;
+            }
+
+            expenses.push({ category: cat, desc, amount });
+            localStorage.setItem('okinawa_expenses', JSON.stringify(expenses));
+            
+            document.getElementById('exp-desc').value = '';
+            document.getElementById('exp-amount').value = '';
+            
+            renderExpenses();
+            updateChart();
+        }
+
+        function clearExpenses() {
+            if(confirm('確定要清除所有記帳紀錄嗎？')) {
+                expenses = [];
+                localStorage.removeItem('okinawa_expenses');
+                renderExpenses();
+                updateChart();
+            }
+        }
+
+        function renderExpenses() {
+            const list = document.getElementById('expense-list');
+            list.innerHTML = '';
+            expenses.slice().reverse().forEach(exp => {
+                const row = document.createElement('tr');
+                row.className = "border-b border-slate-50 hover:bg-slate-50 transition";
+                row.innerHTML = `
+                    <td class="py-3">
+                        <span class="block font-bold text-slate-700">${exp.desc}</span>
+                        <span class="text-[10px] text-slate-400">${exp.category}</span>
+                    </td>
+                    <td class="py-3 font-mono font-bold text-blue-600">¥${exp.amount.toLocaleString()}</td>
+                    <td class="py-3 font-mono text-slate-500">$${Math.round(exp.amount * 0.22).toLocaleString()}</td>
+                `;
+                list.appendChild(row);
             });
+        }
+
+        function updateChart() {
+            const dataMap = { Food: 0, Transport: 0, Shopping: 0, Misc: 0 };
+            expenses.forEach(e => dataMap[e.category] += e.amount);
+
+            const ctx = document.getElementById('expenseChart');
+            if (!ctx) return;
+
+            if (expenseChart) {
+                expenseChart.data.datasets[0].data = Object.values(dataMap);
+                expenseChart.update();
+            } else {
+                expenseChart = new Chart(ctx.getContext('2d'), {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['餐飲', '交通', '購物', '雜支'],
+                        datasets: [{
+                            data: Object.values(dataMap),
+                            backgroundColor: ['#3b82f6', '#4f46e5', '#10b981', '#94a3b8'],
+                            borderWidth: 0
+                        }]
+                    },
+                    options: { maintainAspectRatio: false, plugins: { legend: { display: false } }, cutout: '75%' }
+                });
+            }
+        }
+
+        window.onload = function() {
+            // 初始化總預算分析 (非記帳)
+            const budgetCanvas = document.getElementById('mainBudgetPie');
+            if (budgetCanvas) {
+                new Chart(budgetCanvas.getContext('2d'), {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['餐飲', '交通', '購物'],
+                        datasets: [{
+                            data: [40, 25, 35],
+                            backgroundColor: ['#3b82f6', '#4f46e5', '#94a3b8'],
+                            borderWidth: 0
+                        }]
+                    },
+                    options: { maintainAspectRatio: false, plugins: { legend: { display: false } }, cutout: '70%' }
+                });
+            }
+
+            renderExpenses();
+            updateChart();
         };
     </script>
 </body>
